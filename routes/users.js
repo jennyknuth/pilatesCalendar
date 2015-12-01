@@ -1,23 +1,24 @@
 var express = require('express');
 var router = express.Router();
 var pg = require('pg');
-var connectionString = process.env.DATABASE_URL || 'postgres://localhost:3000/pilates';
+var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/pilates'; // got it! why????
 
-var client = new pg.Client(connectionString);
-client.connect();
+// var client = new pg.Client(conString); // I don't think this is needed anymore in the case of "client pooling" in pg
+// client.connect();
 
 /* GET users listing. */
+
 // router.get('/', function(req, res, next) {
 //   res.send('respond with a resource');
 // });
 
 router.get('/', function(req, res) {
-  pg.query = client.query("select * from users")
 
     var results = [];
 
     // Get a Postgres client from the connection pool
-    pg.connect(connectionString, function(err, client, done) {
+    pg.connect(conString, function(err, client, done) {
+      console.log(client);
         // Handle connection errors
         if(err) {
           done();
@@ -26,7 +27,7 @@ router.get('/', function(req, res) {
         }
 
         // SQL Query > Select Data
-        var query = client.query("SELECT * FROM users ORDER BY id ASC;");
+        var query = client.query("SELECT * FROM users ORDER BY uid ASC;");
 
         // Stream results back one row at a time
         query.on('row', function(row) {
